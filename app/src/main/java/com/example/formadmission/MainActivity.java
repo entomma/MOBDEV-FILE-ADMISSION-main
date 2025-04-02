@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected List<Student> doInBackground(Void... voids) {
             List<Student> students = new ArrayList<>();
-            String sql = "SELECT sn.student_id, sn.first_name, sn.middle_name, sn.last_name, sc.email, sa.street, sa.barangay, sa.city, sa.province, sa.zipcode " +
+            String sql = "SELECT sn.student_id, sn.first_name, sn.middle_name, sn.last_name, sc.email, sa.street, sa.barangay, sa.city, sa.province, sa.zipcode,  sc.phone_number " +
                     "FROM studentcontact sc " +
                     "INNER JOIN studentname sn ON sc.student_id = sn.student_id " +
                     "INNER JOIN studentaddress sa ON sc.student_id = sa.student_id";
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     String city = rs.getString("city");
                     String province = rs.getString("province");
                     String zipcode = rs.getString("zipcode");
+                    String phone_number = rs.getString("phone_number");
 
                     // Log the retrieved values
                     Log.d("PopulateForm", "First Name: " + firstName);
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                     String address = street + " " + barangay + " " + city + " " + province + " " + zipcode;
 
                     // Add student to the list
-                    students.add(new Student(studentid, fullname, city));  // Make sure to pass the correct data
+                    students.add(new Student(studentid, fullname, firstName, address, city , zipcode, province, barangay, street, email, phone_number));  // Make sure to pass the correct data
 
                     // Check if the fields are null
                     if (firstName == null || middleName == null || lastName == null || city == null) {
@@ -121,6 +122,12 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra("student_id", student.getStudentid()); // Pass the student ID
                         intent.putExtra("first_name", student.getfirstName()); // Pass the full name
                         intent.putExtra("city", student.getCity()); // Pass the city
+                        intent.putExtra("zipcode", student.getZip());
+                        intent.putExtra("province", student.getProvince());
+                        intent.putExtra("barangay", student.getBarangay());
+                        intent.putExtra("street", student.getStreet());
+                        intent.putExtra("email", student.getEmail());
+                        intent.putExtra("phone_number", student.getPhone_number());
                         startActivity(intent);
                     }
                 });

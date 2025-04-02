@@ -1,6 +1,6 @@
 package com.example.formadmission;
-
 import androidx.appcompat.app.AlertDialog;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -46,6 +46,7 @@ public class submission extends AppCompatActivity {
         Log.d("PopulateForm", "Birth Date: " + intent.getStringExtra("birth_date"));
         Log.d("PopulateForm", "City: " + intent.getStringExtra("city"));
         Log.d("PopulateForm", "Courses: " + intent.getStringArrayListExtra("course_id"));
+        Log.d("PopulateForm", "province: " + intent.getStringArrayListExtra("province"));
 
 
         // Initialize UI components
@@ -132,6 +133,8 @@ public class submission extends AppCompatActivity {
         Log.d("PopulateForm", "Gender: " + gender);
         Log.d("PopulateForm", "Birth Date: " + birthDate);
         Log.d("PopulateForm", "Courses: " + selectedCourses);
+        Log.d("PopulateForm", "Courses: " + zip);
+        Log.d("PopulateForm", "province: " + province);
 
         // Fill form fields
         firstNameEditText.setText(firstName);
@@ -226,10 +229,93 @@ public class submission extends AppCompatActivity {
 
         // Create date of birth string (format: yyyy-MM-dd)
         String dobString = birthYear + "-" + String.format("%02d", birthMonthSpinner.getSelectedItemPosition()) + "-" + String.format("%02d", birthDaySpinner.getSelectedItemPosition());
-
-        // Save the data to the database or wherever it needs to go
-
-        // Proceed to another activity or save changes
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to save the record?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    new Thread(() -> {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        Connection connection = connectionHelper.connect_to_db("FormAdmission", "postgres", "leerajenn");
+                        if (connection != null) {
+                            try {
+                                connection.setAutoCommit(false);
+                                String studentSQL = "INSERT INTO students DEFAULT VALUES RETURNING student_id";
+                                int studentID = 0;
+                                try (PreparedStatement stmt = connection.prepareStatement(studentSQL)) {
+                                    ResultSet rs = stmt.executeQuery();
+                                    if (rs.next()) {
+                                        studentID = rs.getInt("student_id");
+                                    }
+                                }
+                                String nameSQL = "INSERT INTO studentname (student_id, first_name, middle_name, last_name, gender) VALUES (?, ?, ?, ?, ?)";
+                                try (PreparedStatement stmt = connection.prepareStatement(nameSQL)) {
+                                    stmt.setInt(1, studentID);
+                                    stmt.setString(2, firstName);
+                                    stmt.setString(3, middleName);
+                                    stmt.setString(4, lastName);
+                                    stmt.setString(5, gender);
+                                    stmt.executeUpdate();
+                                }
+                                String contactSQL = "INSERT INTO studentcontact (student_id, email, phone_number) VALUES (?, ?, ?)";
+                                try (PreparedStatement stmt = connection.prepareStatement(contactSQL)) {
+                                    stmt.setInt(1, studentID);
+                                    stmt.setString(2, email);
+                                    stmt.setString(3, phoneNumber);
+                                    stmt.executeUpdate();
+                                }
+                                String bdaySQL = "INSERT INTO studentbirth (student_id, date_of_births) VALUES (?, ?)";
+                                try (PreparedStatement stmt = connection.prepareStatement(bdaySQL)) {
+                                    stmt.setInt(1, studentID);
+                                    stmt.setString(2, dobString);
+                                    stmt.executeUpdate();
+                                }
+                                String addressSQL = "INSERT INTO studentaddress (student_id, street, barangay, city, province, zipcode) VALUES (?, ?, ?, ?, ?, ?)";
+                                try (PreparedStatement stmt = connection.prepareStatement(addressSQL)) {
+                                    stmt.setInt(1, studentID);
+                                    stmt.setString(2, streetAddress);
+                                    stmt.setString(3, barangay);
+                                    stmt.setString(4, city);
+                                    stmt.setString(5, province);
+                                    stmt.setString(6, zipCode);
+                                    stmt.executeUpdate();
+                                }
+                                String courseSQL = "INSERT INTO studentpreference (student_id, course_id) VALUES (?, ?)";
+                                try (PreparedStatement stmt = connection.prepareStatement(courseSQL)) {
+                                    stmt.setInt(1, studentID);
+                                    if (course_cs.isChecked()) {
+                                        stmt.setInt(2, 1);
+                                        stmt.executeUpdate();
+                                    }
+                                    if (course_business_admin.isChecked()) {
+                                        stmt.setInt(2, 2);
+                                        stmt.executeUpdate();
+                                    }
+                                    if (course_mechanical_engg.isChecked()) {
+                                        stmt.setInt(2, 3);
+                                        stmt.executeUpdate();
+                                    }
+                                }
+                                connection.commit();
+                                runOnUiThread(() -> {
+                                    Toast.makeText(submission.this, "Student record saved successfully!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(submission.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                });
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                                runOnUiThread(() -> {
+                                    Toast.makeText(submission.this, "Error inserting data into database: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        } else {
+                            runOnUiThread(() -> {
+                                Toast.makeText(submission.this, "Database connection failed!", Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }).start();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
     private boolean validateForm() {
         boolean isValid = true;
@@ -248,10 +334,6 @@ public class submission extends AppCompatActivity {
         // Validate Name Fields
         if (firstNameEditText.getText().toString().trim().isEmpty()) {
             errorFirstName.setVisibility(View.VISIBLE);
-            isValid = false;
-        }
-        if (middleNameEditText.getText().toString().trim().isEmpty()) {
-            errorMiddleName.setVisibility(View.VISIBLE);
             isValid = false;
         }
         if (lastNameEditText.getText().toString().trim().isEmpty()) {
