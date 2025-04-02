@@ -33,11 +33,101 @@ public class submission extends AppCompatActivity {
     private TextView errorFirstName, errorPhoneNumber, errorMiddleName, errorLastName, errorMonth, errorDay, errorYear, errorEmailAddress, errorCourse;
     private CheckBox course_cs, course_business_admin, course_mechanical_engg, course_electrical_engg, course_civil_engg, course_medicine, course_psychology, course_arts_humanities, course_biotechnology, course_law;
 
+    private void deleteStudentData() {
+        int studentId = getIntent().getIntExtra("student_id", -1);
+        if (studentId == -1) {
+            Toast.makeText(this, "Error: No student selected.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Button deletebutton = findViewById(R.id.btnDelete);
+        deletebutton.setVisibility(View.VISIBLE);
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Student")
+                .setMessage("Are you sure you want to delete this record?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    new Thread(() -> {
+                        ConnectionHelper connectionHelper = new ConnectionHelper();
+                        Connection connection = connectionHelper.connect_to_db("FormAdmission", "postgres", "leerajenn");
+
+                        if (connection != null) {
+                            try {
+                                connection.setAutoCommit(false);
+
+                                // Delete from related tables first (to avoid foreign key constraint errors)
+                                String deleteCourse = "DELETE FROM studentpreference WHERE student_id = ?";
+                                String deleteContact = "DELETE FROM studentcontact WHERE student_id = ?";
+                                String deleteBirth = "DELETE FROM studentbirth WHERE student_id = ?";
+                                String deleteAddress = "DELETE FROM studentaddress WHERE student_id = ?";
+                                String deleteName = "DELETE FROM studentname WHERE student_id = ?";
+                                String deleteStudent = "DELETE FROM students WHERE student_id = ?";
+
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteCourse)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteContact)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteBirth)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteAddress)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteName)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+                                try (PreparedStatement stmt = connection.prepareStatement(deleteStudent)) {
+                                    stmt.setInt(1, studentId);
+                                    stmt.executeUpdate();
+                                }
+
+                                connection.commit();
+                                connection.close();
+
+                                runOnUiThread(() -> {
+                                    Toast.makeText(submission.this, "Student deleted successfully!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(submission.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                });
+
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                                runOnUiThread(() -> Toast.makeText(submission.this, "Deletion failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                            }
+                        } else {
+                            runOnUiThread(() -> Toast.makeText(submission.this, "Database connection failed!", Toast.LENGTH_SHORT).show());
+                        }
+                    }).start();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submission);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Button deleteButton = findViewById(R.id.btnDelete);
+
+        // Get the student ID from Intent
+        int studentId = getIntent().getIntExtra("student_id", -1);
+
+        // Check if we are editing a student (i.e., student_id is not -1)
+        if (studentId != -1) {
+            // Show the delete button if editing
+            deleteButton.setVisibility(View.VISIBLE);
+
+            // Set up the delete button's onClickListener
+            deleteButton.setOnClickListener(v -> deleteStudentData());
+        }
 
         Intent intent = getIntent();
         Log.d("PopulateForm", "Student ID: " + intent.getIntExtra("student_id", -1));
