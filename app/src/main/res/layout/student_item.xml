@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/tvStudentNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12345678"
+        android:textSize="37sp"
+        android:textStyle="bold"
+        android:layout_gravity="start"
+        android:paddingEnd="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <!-- Student Name and Address -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+
+        <TextView
+        android:id="@+id/tvStudentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First Name Last Name"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
+    <!-- Student Address (normal) -->
+        <TextView
+        android:id="@+id/tvStudentAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Student Address"
+        android:textSize="14sp"/>
+    </LinearLayout>
+</LinearLayout>
