@@ -30,7 +30,7 @@ public class submission extends AppCompatActivity {
     private EditText streetAddressEditText, barangayEditText, cityEditText, provinceEditText, zipCodeEditText;
     private Spinner birthMonthSpinner, birthDaySpinner, birthYearSpinner;
     private RadioGroup genderGroup;
-    private TextView errorFirstName, errorPhoneNumber, errorMiddleName, errorLastName, errorMonth, errorDay, errorYear, errorEmailAddress, errorCourse;
+    private TextView errorFirstName, errorPhoneNumber, errorMiddleName, errorLastName, errorMonth, errorDay, errorYear, errorEmailAddress, errorCourse, errorStreet, errorBarangay, errorCity, errorProvince, errorZip;
     private CheckBox course_cs, course_business_admin, course_mechanical_engg, course_electrical_engg, course_civil_engg, course_medicine, course_psychology, course_arts_humanities, course_biotechnology, course_law;
 
     private void deleteStudentData() {
@@ -151,6 +151,7 @@ public class submission extends AppCompatActivity {
         provinceEditText = findViewById(R.id.province);
         zipCodeEditText = findViewById(R.id.zipCode);
 
+
         // Gender RadioGroup
         genderGroup = findViewById(R.id.genderGroup);
 
@@ -164,6 +165,11 @@ public class submission extends AppCompatActivity {
         errorYear = findViewById(R.id.errorYear);
         errorEmailAddress = findViewById(R.id.errorEmailAddress);
         errorCourse = findViewById(R.id.errorCourse);
+        errorBarangay = findViewById(R.id.errorBarangay);
+        errorStreet = findViewById(R.id.errorStreet);
+        errorCity = findViewById(R.id.errorCity);
+        errorProvince = findViewById(R.id.errorProvince);
+        errorZip = findViewById(R.id.errorZip);
 
         // Course Checkboxes
         course_psychology = findViewById(R.id.course_psychology);
@@ -430,7 +436,26 @@ public class submission extends AppCompatActivity {
             errorLastName.setVisibility(View.VISIBLE);
             isValid = false;
         }
-
+        if (barangayEditText.getText().toString().trim().isEmpty()) {
+            errorBarangay.setVisibility(View.VISIBLE);
+            isValid = false;
+        }
+        if (cityEditText.getText().toString().trim().isEmpty()){
+            errorCity.setVisibility(View.VISIBLE);
+            isValid = false;
+        }
+        if (streetAddressEditText.getText().toString().trim().isEmpty()){
+            errorStreet.setVisibility(View.VISIBLE);
+            isValid = false;
+        }
+        if (provinceEditText.getText().toString().trim().isEmpty()){
+            errorProvince.setVisibility(View.VISIBLE);
+            isValid = false;
+        }
+        if (zipCodeEditText.getText().toString().trim().isEmpty()){
+            errorZip.setVisibility(View.VISIBLE);
+            isValid=false;
+        }
         // Validate Phone and Email
         String phone = phoneNumberEditText.getText().toString().trim();
         if (phone.isEmpty() || !phone.startsWith("09") || phone.length() != 11) {
@@ -443,9 +468,9 @@ public class submission extends AppCompatActivity {
             errorEmailAddress.setVisibility(View.VISIBLE);
             isValid = false;
         }
-
         // Validate Gender
         if (genderGroup.getCheckedRadioButtonId() == -1) {
+
             isValid = false;
         }
 

@@ -188,6 +188,7 @@
             app:layout_constraintTop_toBottomOf="@id/genderGroup"
             app:layout_constraintStart_toStartOf="parent" />
 
+
         <EditText
             android:id="@+id/phoneNumber"
             android:layout_width="0dp"
@@ -247,6 +248,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/addressLabel" />
+        <TextView
+            android:id="@+id/errorStreet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="411dp"
+            android:text="Street is required"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/streetAddress" />
 
         <EditText
             android:id="@+id/barangay"
@@ -256,6 +268,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/streetAddress" />
+        <TextView
+            android:id="@+id/errorBarangay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="411dp"
+            android:text="Barangay is required"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barangay" />
 
         <EditText
             android:id="@+id/city"
@@ -265,6 +288,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barangay" />
+        <TextView
+            android:id="@+id/errorCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="411dp"
+            android:text="City is required"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/city" />
 
         <EditText
             android:id="@+id/province"
@@ -274,15 +308,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/city" />
+        <TextView
+            android:id="@+id/errorProvince"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="411dp"
+            android:text="Province is required"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/province" />
 
         <EditText
             android:id="@+id/zipCode"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Zip Code"
+            android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/province" />
+        <TextView
+            android:id="@+id/errorZip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="411dp"
+            android:text="Zip Code is required"
+            android:textColor="@android:color/holo_red_light"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/zipCode" />
 
         <!-- Course Preferences Section -->
         <TextView

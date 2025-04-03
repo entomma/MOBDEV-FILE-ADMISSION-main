@@ -19,11 +19,13 @@
         <activity
             android:name=".submission"
             android:exported="false"
-            android:label="Test"
+            android:label="College Admission Form"
             android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:label="College Admission Applicant List">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
